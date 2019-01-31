@@ -1,7 +1,6 @@
 package io.github.streamingwithflink.chapter7
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource, SensorTimeAssigner}
-
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala._
@@ -39,21 +38,21 @@ object KeyedStateFunction {
       .flatMap(new TemperatureAlertFunction(1.1))
 
     /* Scala shortcut to define a stateful FlatMapFunction. */
-//    val alerts: DataStream[(String, Double, Double)] = keyedSensorData
-//      .flatMapWithState[(String, Double, Double), Double] {
-//        case (in: SensorReading, None) =>
-//          // no previous temperature defined. Just update the last temperature
-//          (List.empty, Some(in.temperature))
-//        case (in: SensorReading, lastTemp: Some[Double]) =>
-//          // compare temperature difference with threshold
-//          if (lastTemp.get > 0.0 && (in.temperature / lastTemp.get) > 1.1) {
-//            // threshold exceeded. Emit an alert and update the last temperature
-//            (List((in.id, in.temperature, lastTemp.get)), Some(in.temperature))
-//          } else {
-//            // threshold not exceeded. Just update the last temperature
-//            (List.empty, Some(in.temperature))
-//          }
-//      }
+    //    val alerts: DataStream[(String, Double, Double)] = keyedSensorData
+    //      .flatMapWithState[(String, Double, Double), Double] {
+    //        case (in: SensorReading, None) =>
+    //          // no previous temperature defined. Just update the last temperature
+    //          (List.empty, Some(in.temperature))
+    //        case (in: SensorReading, lastTemp: Some[Double]) =>
+    //          // compare temperature difference with threshold
+    //          if (lastTemp.get > 0.0 && (in.temperature / lastTemp.get) > 1.1) {
+    //            // threshold exceeded. Emit an alert and update the last temperature
+    //            (List((in.id, in.temperature, lastTemp.get)), Some(in.temperature))
+    //          } else {
+    //            // threshold not exceeded. Just update the last temperature
+    //            (List.empty, Some(in.temperature))
+    //          }
+    //      }
 
     // print result stream to standard out
     alerts.print()
@@ -70,7 +69,7 @@ object KeyedStateFunction {
   * @param threshold The threshold to raise an alert.
   */
 class TemperatureAlertFunction(val threshold: Double)
-    extends RichFlatMapFunction[SensorReading, (String, Double, Double)] {
+  extends RichFlatMapFunction[SensorReading, (String, Double, Double)] {
 
   // the state handle object
   private var lastTempState: ValueState[Double] = _

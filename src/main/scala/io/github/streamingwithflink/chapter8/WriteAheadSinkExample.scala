@@ -29,8 +29,7 @@ import io.github.streamingwithflink.util.{ResettableSensorSource, SensorReading,
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.ExecutionConfig
 import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.runtime.operators.{CheckpointCommitter, GenericWriteAheadSink}
 import org.apache.flink.util.Collector
@@ -82,14 +81,14 @@ object WriteAheadSinkExample {
     val avgTemp: DataStream[(String, Double)] = sensorData
       .timeWindowAll(Time.seconds(1))
       .apply((w, vals, out: Collector[(String, Double)]) => {
-          val avgTemp = vals.map(_.temperature).sum / vals.count(_ => true)
-          // format window timestamp as ISO timestamp string
-          val epochSeconds = w.getEnd / 1000
-          val tString = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC)
-            .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-          // emit record
-          out.collect((tString, avgTemp))
-        }
+        val avgTemp = vals.map(_.temperature).sum / vals.count(_ => true)
+        // format window timestamp as ISO timestamp string
+        val epochSeconds = w.getEnd / 1000
+        val tString = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC)
+          .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        // emit record
+        out.collect((tString, avgTemp))
+      }
       )
       // generate failures to trigger job recovery
       .map(new FailingMapper[(String, Double)](16)).setParallelism(1)
@@ -99,8 +98,8 @@ object WriteAheadSinkExample {
     // print to standard out with a write-ahead log.
     // results are printed when a checkpoint is completed.
     avgTemp.transform(
-        "WriteAheadSink",
-        new StdOutWriteAheadSink)
+      "WriteAheadSink",
+      new StdOutWriteAheadSink)
       // enforce sequential writing
       .setParallelism(1)
 
@@ -108,9 +107,9 @@ object WriteAheadSinkExample {
     // --------
     // print to standard out without write-ahead log.
     // results are printed as they are produced and re-emitted in case of a failure.
-//    avgTemp.print()
-//      // enforce sequential writing
-//      .setParallelism(1)
+    //    avgTemp.print()
+    //      // enforce sequential writing
+    //      .setParallelism(1)
 
     env.execute()
   }
@@ -120,17 +119,17 @@ object WriteAheadSinkExample {
   * Write-ahead sink that prints to standard out and commits checkpoints to the local file system.
   */
 class StdOutWriteAheadSink extends GenericWriteAheadSink[(String, Double)](
-    // CheckpointCommitter that commits checkpoints to the local file system
-    new FileCheckpointCommitter(System.getProperty("java.io.tmpdir")),
-    // Serializer for records
-    createTypeInformation[(String, Double)].createSerializer(new ExecutionConfig),
-    // Random JobID used by the CheckpointCommitter
-    UUID.randomUUID.toString) {
+  // CheckpointCommitter that commits checkpoints to the local file system
+  new FileCheckpointCommitter(System.getProperty("java.io.tmpdir")),
+  // Serializer for records
+  createTypeInformation[(String, Double)].createSerializer(new ExecutionConfig),
+  // Random JobID used by the CheckpointCommitter
+  UUID.randomUUID.toString) {
 
   override def sendValues(
-      readings: Iterable[(String, Double)],
-      checkpointId: Long,
-      timestamp: Long): Boolean = {
+                           readings: Iterable[(String, Double)],
+                           checkpointId: Long,
+                           timestamp: Long): Boolean = {
 
     for (r <- readings.asScala) {
       // write record to standard out

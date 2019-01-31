@@ -17,8 +17,8 @@ package io.github.streamingwithflink.util
 
 import java.util.Calendar
 
-import org.apache.flink.api.scala._
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
+import org.apache.flink.api.scala._
 import org.apache.flink.runtime.state.{FunctionInitializationContext, FunctionSnapshotContext}
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction

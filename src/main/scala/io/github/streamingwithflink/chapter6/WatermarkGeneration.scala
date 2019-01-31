@@ -33,7 +33,7 @@ object WatermarkGeneration {
       .assignTimestampsAndWatermarks(new PunctuatedAssigner)
 
     readingsWithPeriodicWMs.print()
-//    readingsWithPunctuatedWMs.print()
+    //    readingsWithPunctuatedWMs.print()
 
     env.execute("Assign timestamps and generate watermarks")
   }

@@ -104,7 +104,7 @@ class AvgTempFunction
   }
 }
 
-case class MinMaxTemp(id: String, min: Double, max:Double, endTs: Long)
+case class MinMaxTemp(id: String, min: Double, max: Double, endTs: Long)
 
 /**
   * A ProcessWindowFunction that computes the lowest and highest temperature

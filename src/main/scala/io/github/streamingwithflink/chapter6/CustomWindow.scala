@@ -8,11 +8,11 @@ import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.common.typeutils.TypeSerializer
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.function.ProcessWindowFunction
-import org.apache.flink.streaming.api.{TimeCharacteristic, environment}
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner
 import org.apache.flink.streaming.api.windowing.triggers.{EventTimeTrigger, Trigger, TriggerResult}
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
+import org.apache.flink.streaming.api.{TimeCharacteristic, environment}
 import org.apache.flink.util.Collector
 
 object CustomWindows {
@@ -54,14 +54,14 @@ object CustomWindows {
 
 /** A custom window that groups events into 30 second tumbling windows. */
 class ThirtySecondsWindows
-    extends WindowAssigner[Object, TimeWindow] {
+  extends WindowAssigner[Object, TimeWindow] {
 
   val windowSize: Long = 30 * 1000L
 
   override def assignWindows(
-      o: Object,
-      ts: Long,
-      ctx: WindowAssigner.WindowAssignerContext): java.util.List[TimeWindow] = {
+                              o: Object,
+                              ts: Long,
+                              ctx: WindowAssigner.WindowAssignerContext): java.util.List[TimeWindow] = {
 
     // rounding down by 30 seconds
     val startTime = ts - (ts % windowSize)
@@ -71,12 +71,12 @@ class ThirtySecondsWindows
   }
 
   override def getDefaultTrigger(
-      env: environment.StreamExecutionEnvironment): Trigger[Object, TimeWindow] = {
+                                  env: environment.StreamExecutionEnvironment): Trigger[Object, TimeWindow] = {
     EventTimeTrigger.create()
   }
 
   override def getWindowSerializer(
-      executionConfig: ExecutionConfig): TypeSerializer[TimeWindow] = {
+                                    executionConfig: ExecutionConfig): TypeSerializer[TimeWindow] = {
     new TimeWindow.Serializer
   }
 
@@ -85,13 +85,13 @@ class ThirtySecondsWindows
 
 /** A trigger that fires early. The trigger fires at most every second. */
 class OneSecondIntervalTrigger
-    extends Trigger[SensorReading, TimeWindow] {
+  extends Trigger[SensorReading, TimeWindow] {
 
   override def onElement(
-      r: SensorReading,
-      timestamp: Long,
-      window: TimeWindow,
-      ctx: Trigger.TriggerContext): TriggerResult = {
+                          r: SensorReading,
+                          timestamp: Long,
+                          window: TimeWindow,
+                          ctx: Trigger.TriggerContext): TriggerResult = {
 
     // firstSeen will be false if not set yet
     val firstSeen: ValueState[Boolean] = ctx.getPartitionedState(
@@ -111,9 +111,9 @@ class OneSecondIntervalTrigger
   }
 
   override def onEventTime(
-      timestamp: Long,
-      window: TimeWindow,
-      ctx: Trigger.TriggerContext): TriggerResult = {
+                            timestamp: Long,
+                            window: TimeWindow,
+                            ctx: Trigger.TriggerContext): TriggerResult = {
     if (timestamp == window.getEnd) {
       // final evaluation and purge window state
       TriggerResult.FIRE_AND_PURGE
@@ -129,16 +129,16 @@ class OneSecondIntervalTrigger
   }
 
   override def onProcessingTime(
-      timestamp: Long,
-      window: TimeWindow,
-      ctx: Trigger.TriggerContext): TriggerResult = {
+                                 timestamp: Long,
+                                 window: TimeWindow,
+                                 ctx: Trigger.TriggerContext): TriggerResult = {
     // Continue. We don't use processing time timers
     TriggerResult.CONTINUE
   }
 
   override def clear(
-      window: TimeWindow,
-      ctx: Trigger.TriggerContext): Unit = {
+                      window: TimeWindow,
+                      ctx: Trigger.TriggerContext): Unit = {
 
     // clear trigger state
     val firstSeen: ValueState[Boolean] = ctx.getPartitionedState(
@@ -150,13 +150,13 @@ class OneSecondIntervalTrigger
 /** A window function that counts the readings per sensor and window.
   * The function emits the sensor id, window end, time of function evaluation, and count. */
 class CountFunction
-    extends ProcessWindowFunction[SensorReading, (String, Long, Long, Int), String, TimeWindow] {
+  extends ProcessWindowFunction[SensorReading, (String, Long, Long, Int), String, TimeWindow] {
 
   override def process(
-      key: String,
-      ctx: Context,
-      readings: Iterable[SensorReading],
-      out: Collector[(String, Long, Long, Int)]): Unit = {
+                        key: String,
+                        ctx: Context,
+                        readings: Iterable[SensorReading],
+                        out: Collector[(String, Long, Long, Int)]): Unit = {
 
     // count readings
     val cnt = readings.count(_ => true)

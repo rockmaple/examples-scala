@@ -1,9 +1,9 @@
 package io.github.streamingwithflink.chapter7
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource, SensorTimeAssigner}
-import org.apache.flink.api.scala._
 import org.apache.flink.api.common.functions.FlatMapFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor, ValueState, ValueStateDescriptor}
+import org.apache.flink.api.scala._
 import org.apache.flink.runtime.state.{FunctionInitializationContext, FunctionSnapshotContext}
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.checkpoint.CheckpointedFunction

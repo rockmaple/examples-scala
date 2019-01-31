@@ -1,7 +1,6 @@
 package io.github.streamingwithflink.chapter6
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource, SensorTimeAssigner}
-
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.ProcessFunction
@@ -54,9 +53,9 @@ class FreezingMonitor extends ProcessFunction[SensorReading, SensorReading] {
     new OutputTag[String]("freezing-alarms")
 
   override def processElement(
-      r: SensorReading,
-      ctx: ProcessFunction[SensorReading, SensorReading]#Context,
-      out: Collector[SensorReading]): Unit = {
+                               r: SensorReading,
+                               ctx: ProcessFunction[SensorReading, SensorReading]#Context,
+                               out: Collector[SensorReading]): Unit = {
     // emit freezing alarm if temperature is below 32F.
     if (r.temperature < 32.0) {
       ctx.output(freezingAlarmOutput, s"Freezing Alarm for ${r.id}")

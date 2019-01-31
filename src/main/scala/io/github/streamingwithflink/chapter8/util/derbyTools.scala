@@ -72,7 +72,7 @@ class DerbyReader(query: String, interval: Long) extends Runnable {
 
   override def run(): Unit = {
     val cols = new Array[Any](numResultCols)
-    while(true) {
+    while (true) {
       // wait for the interval
       Thread.sleep(interval)
       // query the Derby table and print the result
@@ -99,7 +99,7 @@ class DerbyWriter(stmt: String, paramGenerator: Random => Array[Any], interval: 
   private val rand = new Random(1234)
 
   override def run(): Unit = {
-    while(true) {
+    while (true) {
       Thread.sleep(interval)
       // get and set parameters
       val params = paramGenerator(rand)

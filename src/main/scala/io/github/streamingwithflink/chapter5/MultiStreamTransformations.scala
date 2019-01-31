@@ -15,8 +15,8 @@
  */
 package io.github.streamingwithflink.chapter5
 
-import io.github.streamingwithflink.chapter5.util.{Alert, SmokeLevel, SmokeLevelSource}
 import io.github.streamingwithflink.chapter5.util.SmokeLevel.SmokeLevel
+import io.github.streamingwithflink.chapter5.util.{Alert, SmokeLevel, SmokeLevelSource}
 import io.github.streamingwithflink.util.{SensorReading, SensorSource, SensorTimeAssigner}
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.co.CoFlatMapFunction
@@ -89,4 +89,5 @@ object MultiStreamTransformations {
       smokeLevel = in2
     }
   }
+
 }

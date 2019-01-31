@@ -55,7 +55,7 @@ object BroadcastStateFunction {
 
     // execute application
     env.execute("Generate Temperature Alerts")
-    }
+  }
 }
 
 case class ThresholdUpdate(id: String, threshold: Double)
@@ -68,7 +68,7 @@ case class ThresholdUpdate(id: String, threshold: Double)
   * @param defaultThreshold The default threshold to raise an alert.
   */
 class UpdatableTemperatureAlertFunction(val defaultThreshold: Double)
-    extends KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)] {
+  extends KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)] {
 
   private lazy val thresholdStateDescriptor =
     new MapStateDescriptor[String, Double]("thresholds", classOf[String], classOf[Double])
@@ -87,9 +87,9 @@ class UpdatableTemperatureAlertFunction(val defaultThreshold: Double)
   }
 
   override def processBroadcastElement(
-      update: ThresholdUpdate,
-      ctx: KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)]#Context,
-      out: Collector[(String, Double, Double)]): Unit = {
+                                        update: ThresholdUpdate,
+                                        ctx: KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)]#Context,
+                                        out: Collector[(String, Double, Double)]): Unit = {
 
     val thresholds = ctx.getBroadcastState(thresholdStateDescriptor)
 
@@ -103,9 +103,9 @@ class UpdatableTemperatureAlertFunction(val defaultThreshold: Double)
   }
 
   override def processElement(
-      reading: SensorReading,
-      readOnlyCtx: KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)]#ReadOnlyContext,
-      out: Collector[(String, Double, Double)]): Unit = {
+                               reading: SensorReading,
+                               readOnlyCtx: KeyedBroadcastProcessFunction[String, SensorReading, ThresholdUpdate, (String, Double, Double)]#ReadOnlyContext,
+                               out: Collector[(String, Double, Double)]): Unit = {
 
     // get read-only broadcast state
     val thresholds = readOnlyCtx.getBroadcastState(thresholdStateDescriptor)

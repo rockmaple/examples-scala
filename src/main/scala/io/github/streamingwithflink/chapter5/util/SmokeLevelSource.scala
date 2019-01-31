@@ -38,7 +38,7 @@ class SmokeLevelSource extends RichParallelSourceFunction[SmokeLevel] {
     // emit data until being canceled
     while (running) {
 
-      if (rand.nextGaussian() > 0.8 ) {
+      if (rand.nextGaussian() > 0.8) {
         // emit a high SmokeLevel
         srcCtx.collect(SmokeLevel.High)
       }

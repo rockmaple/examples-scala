@@ -44,15 +44,15 @@ object BasicTransformations {
 
     // filter out sensor measurements from sensors with temperature under 25 degrees
     val filteredSensors: DataStream[SensorReading] = readings
-      .filter( r =>  r.temperature >= 25)
+      .filter(r => r.temperature >= 25)
 
-   // the above filter transformation using a UDF
-   // val filteredSensors: DataStream[SensorReading] = sensorData
-   //   .filter(new TemperatureFilter(25))
+    // the above filter transformation using a UDF
+    // val filteredSensors: DataStream[SensorReading] = sensorData
+    //   .filter(new TemperatureFilter(25))
 
     // project the id of each sensor reading
     val sensorIds: DataStream[String] = filteredSensors
-      .map( r => r.id )
+      .map(r => r.id)
 
     // the above map transformation using a UDF
     // val sensorIds2: DataStream[String] = sensorData
@@ -60,7 +60,7 @@ object BasicTransformations {
 
     // split the String id of each sensor to the prefix "sensor" and sensor number
     val splitIds: DataStream[String] = sensorIds
-      .flatMap( id => id.split("_") )
+      .flatMap(id => id.split("_"))
 
     // the above flatMap transformation using a UDF
     // val splitIds: DataStream[String] = sensorIds
@@ -83,7 +83,7 @@ object BasicTransformations {
   /** User-defined MapFunction to project a sensor's id */
   class ProjectionMap extends MapFunction[SensorReading, String] {
 
-    override def map(r: SensorReading): String  = r.id
+    override def map(r: SensorReading): String = r.id
 
   }
 

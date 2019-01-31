@@ -23,7 +23,7 @@ import org.apache.flink.streaming.api.windowing.time.Time
   * emits watermarks with five seconds slack.
   */
 class SensorTimeAssigner
-    extends BoundedOutOfOrdernessTimestampExtractor[SensorReading](Time.seconds(5)) {
+  extends BoundedOutOfOrdernessTimestampExtractor[SensorReading](Time.seconds(5)) {
 
   /** Extracts timestamp from SensorReading. */
   override def extractTimestamp(r: SensorReading): Long = r.timestamp

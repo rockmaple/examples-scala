@@ -47,7 +47,7 @@ object SinkFunctionExample {
   * Writes a stream of [[SensorReading]] to a socket.
   */
 class SimpleSocketSink(val host: String, val port: Int)
-    extends RichSinkFunction[SensorReading] {
+  extends RichSinkFunction[SensorReading] {
 
   var socket: Socket = _
   var writer: PrintStream = _
@@ -59,8 +59,8 @@ class SimpleSocketSink(val host: String, val port: Int)
   }
 
   override def invoke(
-      value: SensorReading,
-      ctx: SinkFunction.Context[_]): Unit = {
+                       value: SensorReading,
+                       ctx: SinkFunction.Context[_]): Unit = {
     // write sensor reading to socket
     writer.println(value.toString)
     writer.flush()

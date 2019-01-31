@@ -1,8 +1,8 @@
 package io.github.streamingwithflink.chapter6
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource}
-import org.apache.flink.api.scala._
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
+import org.apache.flink.api.scala._
 import org.apache.flink.api.scala.typeutils.Types
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction
@@ -62,9 +62,9 @@ class ReadingFilter
     )
 
   override def processElement1(
-      reading: SensorReading,
-      ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#Context,
-      out: Collector[SensorReading]): Unit = {
+                                reading: SensorReading,
+                                ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#Context,
+                                out: Collector[SensorReading]): Unit = {
 
     // check if we may forward the reading
     if (forwardingEnabled.value()) {
@@ -73,9 +73,9 @@ class ReadingFilter
   }
 
   override def processElement2(
-      switch: (String, Long),
-      ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#Context,
-      out: Collector[SensorReading]): Unit = {
+                                switch: (String, Long),
+                                ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#Context,
+                                out: Collector[SensorReading]): Unit = {
 
     // enable reading forwarding
     forwardingEnabled.update(true)
@@ -91,9 +91,9 @@ class ReadingFilter
   }
 
   override def onTimer(
-      ts: Long,
-      ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#OnTimerContext,
-      out: Collector[SensorReading]): Unit = {
+                        ts: Long,
+                        ctx: CoProcessFunction[SensorReading, (String, Long), SensorReading]#OnTimerContext,
+                        out: Collector[SensorReading]): Unit = {
 
     // remove all state. Forward switch will be false by default.
     forwardingEnabled.clear()

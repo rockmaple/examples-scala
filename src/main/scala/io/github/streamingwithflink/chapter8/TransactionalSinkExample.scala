@@ -27,10 +27,9 @@ import io.github.streamingwithflink.chapter8.util.FailingMapper
 import io.github.streamingwithflink.util.{ResettableSensorSource, SensorReading, SensorTimeAssigner}
 import org.apache.flink.api.common.ExecutionConfig
 import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.functions.sink.TwoPhaseCommitSinkFunction
 import org.apache.flink.streaming.api.functions.sink.SinkFunction.Context
-import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.functions.sink.TwoPhaseCommitSinkFunction
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
@@ -78,14 +77,14 @@ object TransactionSinkExample {
     val avgTemp: DataStream[(String, Double)] = sensorData
       .timeWindowAll(Time.seconds(1))
       .apply((w, vals, out: Collector[(String, Double)]) => {
-          val avgTemp = vals.map(_.temperature).sum / vals.count(_ => true)
-          // format window timestamp as ISO timestamp string
-          val epochSeconds = w.getEnd / 1000
-          val tString = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC)
-            .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-          // emit record
-          out.collect((tString, avgTemp))
-        }
+        val avgTemp = vals.map(_.temperature).sum / vals.count(_ => true)
+        // format window timestamp as ISO timestamp string
+        val epochSeconds = w.getEnd / 1000
+        val tString = LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC)
+          .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        // emit record
+        out.collect((tString, avgTemp))
+      }
       )
       // generate failures to trigger job recovery
       .map(new FailingMapper[(String, Double)](16)).setParallelism(1)
@@ -101,9 +100,9 @@ object TransactionSinkExample {
     // --------
     // print to standard out without write-ahead log.
     // results are printed as they are produced and re-emitted in case of a failure.
-//    avgTemp.print()
-//      // enforce sequential writing
-//      .setParallelism(1)
+    //    avgTemp.print()
+    //      // enforce sequential writing
+    //      .setParallelism(1)
 
     env.execute()
   }
@@ -135,9 +134,9 @@ object TransactionSinkExample {
   * a dedicated file that is committed once the checkpoint (or a later checkpoint) completes.
   */
 class TransactionalFileSink(val targetPath: String, val tempPath: String)
-    extends TwoPhaseCommitSinkFunction[(String, Double), String, Void](
-      createTypeInformation[String].createSerializer(new ExecutionConfig),
-      createTypeInformation[Void].createSerializer(new ExecutionConfig)) {
+  extends TwoPhaseCommitSinkFunction[(String, Double), String, Void](
+    createTypeInformation[String].createSerializer(new ExecutionConfig),
+    createTypeInformation[Void].createSerializer(new ExecutionConfig)) {
 
   var transactionWriter: BufferedWriter = _
 

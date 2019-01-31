@@ -54,7 +54,7 @@ object StatefulProcessFunction {
   * @param threshold The threshold to raise an alert.
   */
 class SelfCleaningTemperatureAlertFunction(val threshold: Double)
-    extends ProcessFunction[SensorReading, (String, Double, Double)] {
+  extends ProcessFunction[SensorReading, (String, Double, Double)] {
 
   // the state handle object
   private var lastTempState: ValueState[Double] = _
@@ -71,9 +71,9 @@ class SelfCleaningTemperatureAlertFunction(val threshold: Double)
   }
 
   override def processElement(
-      in: SensorReading,
-      ctx: ProcessFunction[SensorReading, (String, Double, Double)]#Context,
-      out: Collector[(String, Double, Double)]) = {
+                               in: SensorReading,
+                               ctx: ProcessFunction[SensorReading, (String, Double, Double)]#Context,
+                               out: Collector[(String, Double, Double)]) = {
 
     // compute timestamp of new timer as timestamp of record plus one hour
     val newTimer = ctx.timestamp() + (3600 * 1000)
@@ -98,9 +98,9 @@ class SelfCleaningTemperatureAlertFunction(val threshold: Double)
   }
 
   override def onTimer(
-      timestamp: Long,
-      ctx: ProcessFunction[SensorReading, (String, Double, Double)]#OnTimerContext,
-      out: Collector[(String, Double, Double)]): Unit = {
+                        timestamp: Long,
+                        ctx: ProcessFunction[SensorReading, (String, Double, Double)]#OnTimerContext,
+                        out: Collector[(String, Double, Double)]): Unit = {
 
     // clear all state for the key
     lastTempState.clear()

@@ -9,8 +9,7 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction
 import org.apache.flink.streaming.api.functions.sink.SinkFunction.Context
-import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment, _}
 
 /**
   * Example program that emits sensor readings with UPSERT writes to an embedded in-memory
@@ -31,7 +30,7 @@ object IdempotentSinkFunctionExample {
       """.stripMargin)
     // start a thread that prints the data written to Derby every 10 seconds.
     new Thread(
-        new DerbyReader("SELECT sensor, temp FROM Temperatures ORDER BY sensor", 10000L))
+      new DerbyReader("SELECT sensor, temp FROM Temperatures ORDER BY sensor", 10000L))
       .start()
 
     // set up the streaming execution environment
@@ -54,7 +53,7 @@ object IdempotentSinkFunctionExample {
 
     val celsiusReadings: DataStream[SensorReading] = sensorData
       // convert Fahrenheit to Celsius using an inlined map function
-      .map( r => SensorReading(r.id, r.timestamp, (r.temperature - 32) * (5.0 / 9.0)) )
+      .map(r => SensorReading(r.id, r.timestamp, (r.temperature - 32) * (5.0 / 9.0)))
 
     // write the converted sensor readings to Derby.
     celsiusReadings.addSink(new DerbyUpsertSink)

@@ -1,8 +1,8 @@
 package io.github.streamingwithflink.chapter6
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource}
-import org.apache.flink.api.scala._
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
+import org.apache.flink.api.scala._
 import org.apache.flink.api.scala.typeutils.Types
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
@@ -55,9 +55,9 @@ class TempIncreaseAlertFunction
     )
 
   override def processElement(
-      r: SensorReading,
-      ctx: KeyedProcessFunction[String, SensorReading, String]#Context,
-      out: Collector[String]): Unit = {
+                               r: SensorReading,
+                               ctx: KeyedProcessFunction[String, SensorReading, String]#Context,
+                               out: Collector[String]): Unit = {
 
     // get previous temperature
     val prevTemp = lastTemp.value()
@@ -81,9 +81,9 @@ class TempIncreaseAlertFunction
   }
 
   override def onTimer(
-      ts: Long,
-      ctx: KeyedProcessFunction[String, SensorReading, String]#OnTimerContext,
-      out: Collector[String]): Unit = {
+                        ts: Long,
+                        ctx: KeyedProcessFunction[String, SensorReading, String]#OnTimerContext,
+                        out: Collector[String]): Unit = {
 
     out.collect("Temperature of sensor '" + ctx.getCurrentKey +
       "' monotonically increased for 1 second.")

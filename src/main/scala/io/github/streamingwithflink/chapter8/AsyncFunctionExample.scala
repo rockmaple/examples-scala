@@ -78,14 +78,14 @@ object AsyncFunctionExample {
       .orderedWait(
         readings,
         new DerbyAsyncFunction,
-        5, TimeUnit.SECONDS,        // timeout requests after 5 seconds
-        100)                        // at most 100 concurrent requests
+        5, TimeUnit.SECONDS, // timeout requests after 5 seconds
+        100) // at most 100 concurrent requests
 
     // OPTION 2 (uncomment to enable)
     // --------
     // look up the location of a sensor from a Derby table with synchronous requests.
-//    val sensorLocations: DataStream[(String, String)] = sensorData
-//      .map(new DerbySyncFunction)
+    //    val sensorLocations: DataStream[(String, String)] = sensorData
+    //      .map(new DerbySyncFunction)
 
     // print the sensor locations
     sensorLocations.print()
@@ -113,8 +113,8 @@ class DerbyAsyncFunction extends AsyncFunction[SensorReading, (String, String)] 
   /** Executes JDBC query in a thread and handles the resulting Future
     * with an asynchronous callback. */
   override def asyncInvoke(
-      reading: SensorReading,
-      resultFuture: ResultFuture[(String, String)]): Unit = {
+                            reading: SensorReading,
+                            resultFuture: ResultFuture[(String, String)]): Unit = {
 
     val sensor = reading.id
 

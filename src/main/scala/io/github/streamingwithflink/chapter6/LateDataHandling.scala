@@ -47,11 +47,11 @@ object LateDataHandling {
     // Select and uncomment on of the lines below to demonstrate a strategy.
 
     // 1. Filter out late readings (to a side output) using a ProcessFunction
-//    filterLateReadings(outOfOrderReadings)
+    //    filterLateReadings(outOfOrderReadings)
     // 2. Redirect late readings to a side output in a window operator
-//    sideOutputLateEventsWindow(outOfOrderReadings)
+    //    sideOutputLateEventsWindow(outOfOrderReadings)
     // 3. Update results when late readings are received in a window operator
-//    updateForLateEventsWindow(outOfOrderReadings)
+    //    updateForLateEventsWindow(outOfOrderReadings)
 
     env.execute()
   }
@@ -87,15 +87,15 @@ object LateDataHandling {
       // count readings per window
       .process(new ProcessWindowFunction[SensorReading, (String, Long, Int), String, TimeWindow] {
 
-        override def process(
-            id: String,
-            ctx: Context,
-            elements: Iterable[SensorReading],
-            out: Collector[(String, Long, Int)]): Unit = {
-          val cnt = elements.count(_ => true)
-          out.collect((id, ctx.window.getEnd, cnt))
-        }
-      })
+      override def process(
+                            id: String,
+                            ctx: Context,
+                            elements: Iterable[SensorReading],
+                            out: Collector[(String, Long, Int)]): Unit = {
+        val cnt = elements.count(_ => true)
+        out.collect((id, ctx.window.getEnd, cnt))
+      }
+    })
 
     // retrieve and print messages for late readings
     countPer10Secs
@@ -129,9 +129,9 @@ object LateDataHandling {
 class LateReadingsFilter extends ProcessFunction[SensorReading, SensorReading] {
 
   override def processElement(
-      r: SensorReading,
-      ctx: ProcessFunction[SensorReading, SensorReading]#Context,
-      out: Collector[SensorReading]): Unit = {
+                               r: SensorReading,
+                               ctx: ProcessFunction[SensorReading, SensorReading]#Context,
+                               out: Collector[SensorReading]): Unit = {
 
     // compare record timestamp with current watermark
     if (r.timestamp < ctx.timerService().currentWatermark()) {
@@ -145,13 +145,13 @@ class LateReadingsFilter extends ProcessFunction[SensorReading, SensorReading] {
 
 /** A counting WindowProcessFunction that distinguishes between first results and updates. */
 class UpdatingWindowCountFunction
-    extends ProcessWindowFunction[SensorReading, (String, Long, Int, String), String, TimeWindow] {
+  extends ProcessWindowFunction[SensorReading, (String, Long, Int, String), String, TimeWindow] {
 
   override def process(
-      id: String,
-      ctx: Context,
-      elements: Iterable[SensorReading],
-      out: Collector[(String, Long, Int, String)]): Unit = {
+                        id: String,
+                        ctx: Context,
+                        elements: Iterable[SensorReading],
+                        out: Collector[(String, Long, Int, String)]): Unit = {
 
     // count the number of readings
     val cnt = elements.count(_ => true)

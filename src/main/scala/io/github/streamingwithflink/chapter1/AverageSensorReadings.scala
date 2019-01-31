@@ -16,7 +16,6 @@
 package io.github.streamingwithflink.chapter1
 
 import io.github.streamingwithflink.util.{SensorReading, SensorSource, SensorTimeAssigner}
-
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.scala.function.WindowFunction
@@ -47,8 +46,8 @@ object AverageSensorReadings {
 
     val avgTemp: DataStream[SensorReading] = sensorData
       // convert Fahrenheit to Celsius using an inlined map function
-      .map( r =>
-      SensorReading(r.id, r.timestamp, (r.temperature - 32) * (5.0 / 9.0)) )
+      .map(r =>
+      SensorReading(r.id, r.timestamp, (r.temperature - 32) * (5.0 / 9.0)))
       // organize stream by sensorId
       .keyBy(_.id)
       // group readings in 1 second windows
@@ -69,10 +68,10 @@ class TemperatureAverager extends WindowFunction[SensorReading, SensorReading, S
 
   /** apply() is invoked once for each window */
   override def apply(
-    sensorId: String,
-    window: TimeWindow,
-    vals: Iterable[SensorReading],
-    out: Collector[SensorReading]): Unit = {
+                      sensorId: String,
+                      window: TimeWindow,
+                      vals: Iterable[SensorReading],
+                      out: Collector[SensorReading]): Unit = {
 
     // compute the average temperature
     val (cnt, sum) = vals.foldLeft((0, 0.0))((c, r) => (c._1 + 1, c._2 + r.temperature))

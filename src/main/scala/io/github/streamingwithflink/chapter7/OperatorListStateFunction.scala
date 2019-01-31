@@ -42,7 +42,7 @@ object OperatorListStateFunction {
 
     // execute application
     env.execute("Count high temperatures")
-    }
+  }
 }
 
 /**
@@ -51,7 +51,7 @@ object OperatorListStateFunction {
   * @param threshold The high temperature threshold.
   */
 class HighTempCounterOpState(val threshold: Double)
-    extends RichFlatMapFunction[SensorReading, (Int, Long)]
+  extends RichFlatMapFunction[SensorReading, (Int, Long)]
     with ListCheckpointed[java.lang.Long] {
 
   // index of the subtask
@@ -82,11 +82,11 @@ class HighTempCounterOpState(val threshold: Double)
   }
 
   /** Split count into 10 partial counts for improved state distribution. */
-//  override def snapshotState(chkpntId: Long, ts: Long): java.util.List[java.lang.Long] = {
-//    // split count into ten partial counts
-//    val div = highTempCnt / 10
-//    val mod = (highTempCnt % 10).toInt
-//    (List.fill(mod)(new java.lang.Long(div + 1)) ++ List.fill(10 - mod)(new java.lang.Long(div))).asJava
-//  }
+  //  override def snapshotState(chkpntId: Long, ts: Long): java.util.List[java.lang.Long] = {
+  //    // split count into ten partial counts
+  //    val div = highTempCnt / 10
+  //    val mod = (highTempCnt % 10).toInt
+  //    (List.fill(mod)(new java.lang.Long(div + 1)) ++ List.fill(10 - mod)(new java.lang.Long(div))).asJava
+  //  }
 
 }
